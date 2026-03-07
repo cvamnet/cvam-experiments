@@ -1,0 +1,30 @@
+name: Daily Automation
+
+on:
+  schedule:
+    - cron: "0 8 * * *"
+  workflow_dispatch:
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Run script
+        run: python automation/daily_message.py
+
+      - name: Commit changes
+        run: |
+          git config --global user.name "automation-bot"
+          git config --global user.email "bot@github.com"
+          git add .
+          git commit -m "Daily automated update" || echo "No changes"
+          git push
